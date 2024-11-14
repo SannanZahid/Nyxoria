@@ -25,10 +25,15 @@ public class GameBoard : MonoBehaviour
     private enum CardValicationstate { FirstCardCheck, SecondCardCheck };
     private CardValicationstate _cardCheckState = CardValicationstate.FirstCardCheck;
     private ScoreSystem _scoreSystem;
+
+    private void Awake()
+    {
+        _scoreSystem = new ScoreSystem();
+    }
+
     /// Takes face card sprites and pass it to card creation  
     public void SetBoard(List<Sprite> selectedCardFace)
     {
-        _scoreSystem = new ScoreSystem();
         ScaleCardToFitContainer(selectedCardFace[0], (float)selectedCardFace.Count / 2);
 
         for (int i = 0; i < selectedCardFace.Count; i++)
