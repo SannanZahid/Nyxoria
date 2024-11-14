@@ -25,6 +25,16 @@ public class ScoreSystem
         _totalCombo = GamePlayerPreferenceManager.GetTotalCombo();
         SetTotalComboScoreDashboard(_totalCombo);
     }
+    public void ResetScoreForNewLevel()
+    {
+        _cardsMatchScore = 0;
+        SetMatchScoreDashboard(0);
+        _turnsScore = 0;
+        SetTurnScoreDashboard(0);
+        _cardComboScore = 0;
+        SetComboScoreDashboard(0);
+    }
+
 
     public void CardsMatched_Score()
     {
