@@ -20,6 +20,10 @@ public class GameBoard : MonoBehaviour
     [SerializeField] private Transform _boardWidgetHolder = default;
     [SerializeField] private float _cellSpacing = 5f;
 
+    [Header("- Level Object Timer Settings -")]
+    [Space(10)]
+    [SerializeField] private TimeSystem _timerSystem;
+
     private List<Transform> _spawnCards = new List<Transform>();
     private Transform _tempCard = default;
     private Card _previousCard;
@@ -91,7 +95,9 @@ public class GameBoard : MonoBehaviour
         {
             card.GetComponent<Card>().DeactivateCard();
         }
+
         _spawnCards.Clear();
+        _timerSystem.ResetTimer();
     }
 
     public void ResetBoard(List<Sprite> selectedCardFace)
@@ -159,6 +165,8 @@ public class GameBoard : MonoBehaviour
         {
             card.GetComponent<Card>().ShowCardSide(Card.CardSides.Back);
         }
+
+        _timerSystem.StartGameTimer();
     }
 
     private void ValidateGameEnd()
@@ -166,6 +174,7 @@ public class GameBoard : MonoBehaviour
         if (_spawnCards.Count <= 0)
         {
             GameController.LevelCompleteEventListner?.Invoke();
+            _timerSystem.StopLevelTimer();
             SetLevelLabel();
         }
     }

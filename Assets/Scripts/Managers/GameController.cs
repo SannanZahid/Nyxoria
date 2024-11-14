@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private List<Sprite> _cardFace = new List<Sprite>();
     [SerializeField] private GameBoard _gameBoard = default;
     [SerializeField] private AddressableDownloader _addressableDownloader;
+    private bool _resetFailScreenflag = true;
 
     private void Start()
     {
@@ -39,7 +40,17 @@ public class GameController : MonoBehaviour
     public void StartNextLevel()
     {
         GameUIMnager.Instance.ToggleActivateLevelCompleteScreen(false);
+        GameUIMnager.Instance.ToggleActivateLevelFailScreen(false);
         StartCoroutine(StartGame());
+    }
+
+    public void ResetLevelOnFail()
+    {
+        if (_resetFailScreenflag)
+        {
+            _resetFailScreenflag = false;
+            StartCoroutine(ResetGame());
+        }
     }
 
     public void LevelComplete()
@@ -51,6 +62,11 @@ public class GameController : MonoBehaviour
     {
         _cardFace = loadedSprites;
         InitializeBoard();
+    }
+    private void ShuffleAndResetBoard()
+    {
+        ShuffleCards(ref _cardFace);
+        _gameBoard.ResetBoard(GetShuffledFaceCards());
     }
 
     /// <summary> 
@@ -92,5 +108,13 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         ShuffleCards(ref _cardFace);
         _gameBoard.ResetBoard(GetShuffledFaceCards());
+    }
+
+    private IEnumerator ResetGame()
+    {
+        yield return new WaitForSeconds(1f);
+        _resetFailScreenflag = true;
+        GameUIMnager.Instance.ToggleActivateLevelFailScreen(false);
+        ShuffleAndResetBoard();
     }
 }
