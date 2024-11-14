@@ -32,7 +32,7 @@ public class GameBoard : MonoBehaviour
     private int _currentLevel = default;
     private ScoreSystem _scoreSystem;
 
-    private void Awake()
+    private void Start()
     {
         _scoreSystem = new ScoreSystem();
         _currentLevel = GamePlayerPreferenceManager.GetGameLevel();

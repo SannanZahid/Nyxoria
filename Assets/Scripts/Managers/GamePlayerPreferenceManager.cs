@@ -8,6 +8,8 @@ public class GamePlayerPreferenceManager : MonoBehaviour
     private const string TotalMatches = "Game_TotalMatches";
     private const string TotalTurns = "Game_TotalTurns";
     private const string TotalCombo = "Game_TotalCombo";
+    private const string FirstTimeSet = "Game_FirstTimeSet";
+
 
     #region Sound
 
@@ -63,6 +65,38 @@ public class GamePlayerPreferenceManager : MonoBehaviour
     public static int GetTotalCombo()
     {
         return PlayerPrefs.GetInt(TotalCombo);
+    }
+
+    #endregion
+
+    #region Set Default Game Playerpref Values
+
+    public static void SetFirstTimeGameOpen()
+    {
+        if (PlayerPrefs.GetInt(FirstTimeSet).Equals(0))
+            PlayerPrefs.SetInt(FirstTimeSet, 1);
+    }
+
+    public static int GetFirstTimeGameOpenSet()
+    {
+        return PlayerPrefs.GetInt(FirstTimeSet);
+    }
+
+    public static void SetInitialGameStats()
+    {
+        if (GetFirstTimeGameOpenSet().Equals(0))
+        {
+            SetDefaultGameValues();
+        }
+    }
+
+    public static void SetDefaultGameValues()
+    {
+        if (GetFirstTimeGameOpenSet().Equals(0))
+        {
+            SetGameLevel(1);
+            SetFirstTimeGameOpen();
+        }
     }
 
     #endregion
