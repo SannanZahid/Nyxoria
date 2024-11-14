@@ -22,41 +22,51 @@ public class GameBoard : MonoBehaviour
     private List<Transform> _spawnCards = new List<Transform>();
     private Transform _tempCard = default;
     private Card _previousCard;
-    private int state = 0;
-
+    private enum CardValicationstate { FirstCardCheck, SecondCardCheck };
+    private CardValicationstate _cardCheckState = CardValicationstate.FirstCardCheck;
+    private ScoreSystem _scoreSystem;
     /// Takes face card sprites and pass it to card creation  
     public void SetBoard(List<Sprite> selectedCardFace)
     {
+        _scoreSystem = new ScoreSystem();
         ScaleCardToFitContainer(selectedCardFace[0], (float)selectedCardFace.Count / 2);
+
         for (int i = 0; i < selectedCardFace.Count; i++)
         {
             CreateCard(i, selectedCardFace[i]);
             CreateCard(i, selectedCardFace[i]);
         }
+
         ShuffleAndSetToBoard();
         StartCoroutine(StartGame());
     }
     public void ValidateCardCombination(Card currentCard)
     {
-        switch (state)
+        switch (_cardCheckState)
         {
-            case 0:
+            case CardValicationstate.FirstCardCheck:
                 {
                     _previousCard = currentCard;
-                    state = 1;
+                    _cardCheckState = CardValicationstate.SecondCardCheck;
+
                     break;
+
                 }
-            case 1:
+            case CardValicationstate.SecondCardCheck:
                 {
                     if (_previousCard.CardID.Equals(currentCard.CardID))
                     {
                         StartCoroutine(DeactivateMatchingCards(_previousCard, currentCard));
+                        _scoreSystem.CardsMatched_Score();
                     }
                     else
                     {
                         StartCoroutine(ResetCardsSelected(_previousCard, currentCard));
+                        _scoreSystem.CardsMisMatchedScore();
                     }
-                    state = 0;
+
+                    _cardCheckState = CardValicationstate.FirstCardCheck;
+
                     break;
                 }
         }
