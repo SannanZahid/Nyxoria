@@ -9,6 +9,20 @@ public class GamePlayerPreferenceManager : MonoBehaviour
     private const string TotalTurns = "Game_TotalTurns";
     private const string TotalCombo = "Game_TotalCombo";
 
+    #region Sound
+
+    public static void SetSound(int i)
+    {
+        PlayerPrefs.SetInt(GameSound, i);
+    }
+
+    public static int GetSound()
+    {
+        return PlayerPrefs.GetInt(GameSound);
+    }
+
+    #endregion
+
     #region GameScoreKeeping
 
     public static void SetGameLevel(int i)

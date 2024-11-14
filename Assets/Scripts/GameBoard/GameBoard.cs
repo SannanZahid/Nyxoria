@@ -63,11 +63,13 @@ public class GameBoard : MonoBehaviour
                     {
                         StartCoroutine(DeactivateMatchingCards(_previousCard, currentCard));
                         _scoreSystem.CardsMatched_Score();
+                        GameSoundManager.Instance.PlaySoundOneShot(GameSoundManager.SoundType.CardMatch);
                     }
                     else
                     {
                         StartCoroutine(ResetCardsSelected(_previousCard, currentCard));
                         _scoreSystem.CardsMisMatchedScore();
+                        GameSoundManager.Instance.PlaySoundOneShot(GameSoundManager.SoundType.CardMisMatch);
                     }
 
                     _cardCheckState = CardValicationstate.FirstCardCheck;
