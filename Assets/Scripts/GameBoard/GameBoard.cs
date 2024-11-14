@@ -27,7 +27,7 @@ public class GameBoard : MonoBehaviour
     /// Takes face card sprites and pass it to card creation  
     public void SetBoard(List<Sprite> selectedCardFace)
     {
-        ScaleCardToFitContainor(selectedCardFace[0], (float)selectedCardFace.Count / 2);
+        ScaleCardToFitContainer(selectedCardFace[0], (float)selectedCardFace.Count / 2);
         for (int i = 0; i < selectedCardFace.Count; i++)
         {
             CreateCard(i, selectedCardFace[i]);
@@ -109,31 +109,35 @@ public class GameBoard : MonoBehaviour
     }
 
     //scalling cards according to containor widget
-    private void ScaleCardToFitContainor(Sprite referenceCardSize, float gridSize)
+    private void ScaleCardToFitContainer(Sprite referenceCardSize, float gridSize)
     {
-        float containorWidth;
-        float containorHeight;
-        GridLayoutGroup boardContainor = _boardWidgetHolder.GetComponent<GridLayoutGroup>();
-        containorWidth = _boardWidgetHolder.GetComponent<RectTransform>().rect.width;
-        containorHeight = _boardWidgetHolder.GetComponent<RectTransform>().rect.height;
+        var boardContainer = _boardWidgetHolder.GetComponent<GridLayoutGroup>();
+        var rectTransform = _boardWidgetHolder.GetComponent<RectTransform>();
+
+        float containerWidth = rectTransform.rect.width;
+        float containerHeight = rectTransform.rect.height;
         float spriteWidth = referenceCardSize.rect.width;
         float spriteHeight = referenceCardSize.rect.height;
-        float forcastCellWidth = (containorWidth - (_cellSpacing * gridSize)) / gridSize;
-        float forcastCellHeight = (containorHeight - (_cellSpacing * gridSize)) / gridSize;
-        float ratioWidth = forcastCellWidth / spriteWidth;
-        float ratioHeight = forcastCellHeight / spriteHeight;
 
-        if (ratioHeight > 1 && ratioWidth > 1)
-        {
-            boardContainor.cellSize = new Vector2(spriteWidth, spriteHeight);
-        }
-        else if (ratioWidth < ratioHeight)
-        {
-            boardContainor.cellSize = new Vector2(spriteWidth * ratioWidth, spriteHeight * ratioWidth);
-        }
-        else
-        {
-            boardContainor.cellSize = new Vector2(spriteWidth * ratioHeight, spriteHeight * ratioHeight);
-        }
+        float forecastCellWidth = (containerWidth - (_cellSpacing * gridSize)) / gridSize;
+        float forecastCellHeight = (containerHeight - (_cellSpacing * gridSize)) / gridSize;
+
+        float widthRatio = forecastCellWidth / spriteWidth;
+        float heightRatio = forecastCellHeight / spriteHeight;
+
+        Vector2 newSize = CalculateNewSize(spriteWidth, spriteHeight, widthRatio, heightRatio);
+        boardContainer.cellSize = newSize;
     }
+
+    private Vector2 CalculateNewSize(float spriteWidth, float spriteHeight, float widthRatio, float heightRatio)
+    {
+        if (heightRatio > 1 && widthRatio > 1)
+        {
+            return new Vector2(spriteWidth, spriteHeight);
+        }
+
+        float optimalRatio = Mathf.Min(widthRatio, heightRatio);
+        return new Vector2(spriteWidth * optimalRatio, spriteHeight * optimalRatio);
+    }
+
 }
