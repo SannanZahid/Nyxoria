@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +9,12 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private TMP_Text _totalTurns;
     [SerializeField] private TMP_Text _totalCombo;
     [SerializeField] private TMP_Text _gameLevel;
+
+    [Header("- Loading Screen UI Settings -")]
+    [Space(10)]
+    [SerializeField] private Transform _loagingScreen;
+    [SerializeField] private string _gameSceneName = "GameScene";
+
 
     public void Start()
     {
@@ -47,5 +51,11 @@ public class MainMenuManager : MonoBehaviour
         SetTotalMatchesText("" + GamePlayerPreferenceManager.GetTotalMatches());
         SetTotalTurnsText("" + GamePlayerPreferenceManager.GetTotalTurns());
         SetGameLevelText("LEVEL " + GamePlayerPreferenceManager.GetGameLevel());
+    }
+
+    public void StartGameScene()
+    {
+        _loagingScreen.gameObject.SetActive(true);
+        _loagingScreen.gameObject.GetComponent<LoadingScreenAsyncHandler>().StartLoading(_gameSceneName);
     }
 }
