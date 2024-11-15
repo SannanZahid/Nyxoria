@@ -23,14 +23,22 @@ public class Card : MonoBehaviour
     /// <summary>
     /// Initializes the card with the given ID and face sprite, and sets up the button click listener.
     /// </summary>
-    public void Init(int cardId, Sprite cardFace, Action<Card> callbackSelectedCard)
+    public void Init(int cardId, Sprite cardFace, Action<Card> callbackSelectedCard, bool activeCard = true)
     {
         _callbackSelectedCardToGameBoard = callbackSelectedCard;
         CardID = cardId;
         _cardFront.GetComponent<Image>().sprite = cardFace;
         _cardInteractionBtn = transform.gameObject.AddComponent<Button>();
         _cardInteractionBtn.onClick.AddListener(CardInteraction);
-        ShowCardSide(CardSides.Front);
+
+        if (activeCard)
+        {
+            ShowCardSide(CardSides.Front);
+        }
+        else
+        {
+            DeactivateCard();
+        }
     }
 
     /// <summary> 
@@ -103,6 +111,17 @@ public class Card : MonoBehaviour
         StartCoroutine(ScaleOverTime(_cardFront, Vector3.zero, 0.25f));
         StartCoroutine(ScaleOverTime(_cardBack, Vector3.zero, 0.25f));
     }
+
+    public string GetFaceCardName()
+    {
+        return _cardFront.GetComponent<Image>().sprite.name;
+    }
+
+    public bool IsCardActive()
+    {
+        return _cardInteractionBtn.interactable;
+    }
+
 
     private IEnumerator CardAnimationRotateAnimation(Transform cardFront, Transform cardBack)
     {

@@ -73,6 +73,7 @@ public class GameUIMnager : Singleton<GameUIMnager>
 
     public void LaunchtMainMenuScene()
     {
+        GamePlayerPreferenceManager.SetBoardData(string.Empty);
         _loadingScreen.gameObject.SetActive(true);
         _loadingScreen.gameObject.GetComponent<LoadingScreenAsyncHandler>().StartLoading(_MainMenuSceneName);
     }

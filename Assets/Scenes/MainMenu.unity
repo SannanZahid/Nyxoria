@@ -862,6 +862,8 @@ MonoBehaviour:
   _totalTurns: {fileID: 1283668831}
   _totalCombo: {fileID: 2017321486}
   _gameLevel: {fileID: 1414931745}
+  _LevelStartButton: {fileID: 890969017}
+  _LevelResumeButton: {fileID: 249819431}
   _loagingScreen: {fileID: 83265486}
   _gameSceneName: GameScene
 --- !u!4 &720231242
@@ -1303,7 +1305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &890969017
 RectTransform:
   m_ObjectHideFlags: 0

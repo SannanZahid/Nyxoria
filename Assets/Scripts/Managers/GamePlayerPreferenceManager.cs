@@ -9,6 +9,24 @@ public class GamePlayerPreferenceManager : MonoBehaviour
     private const string TotalTurns = "Game_TotalTurns";
     private const string TotalCombo = "Game_TotalCombo";
     private const string FirstTimeSet = "Game_FirstTimeSet";
+    private const string Game_BoardData = "Game_BoardData";
+
+
+
+    #region LevelBoardJsonSave
+
+    public static void SetBoardData(string data)
+    {
+        PlayerPrefs.SetString(Game_BoardData, data);
+    }
+
+    public static string GetBoardData()
+    {
+        return PlayerPrefs.GetString(Game_BoardData);
+    }
+
+    #endregion
+
 
 
     #region Sound

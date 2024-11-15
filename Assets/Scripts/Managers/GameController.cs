@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour
     {
         GameUIMnager.Instance.ToggleActivateLevelCompleteScreen(false);
         GameUIMnager.Instance.ToggleActivateLevelFailScreen(false);
-        StartCoroutine(StartGame());
+        StartCoroutine(StartNextGame());
     }
 
     public void ResetLevelOnFail()
@@ -49,7 +49,7 @@ public class GameController : MonoBehaviour
         if (_resetFailScreenflag)
         {
             _resetFailScreenflag = false;
-            StartCoroutine(ResetGame());
+            StartCoroutine(ResetGameBoard());
         }
     }
 
@@ -74,8 +74,15 @@ public class GameController : MonoBehaviour
     /// </summary> 
     private void InitializeBoard()
     {
-        ShuffleCards(ref _cardFace);
-        _gameBoard.SetBoard(GetShuffledFaceCards());
+        if (GamePlayerPreferenceManager.GetBoardData().Equals(string.Empty))
+        {
+            ShuffleCards(ref _cardFace);
+            _gameBoard.SetBoard(GetShuffledFaceCards());
+        }
+        else
+        {
+            _gameBoard.LoadLastSaveLevel(_cardFace);
+        }
     }
 
     /// <summary> 
@@ -103,14 +110,14 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private IEnumerator StartGame()
+    private IEnumerator StartNextGame()
     {
         yield return new WaitForSeconds(1.5f);
         ShuffleCards(ref _cardFace);
         _gameBoard.ResetBoard(GetShuffledFaceCards());
     }
 
-    private IEnumerator ResetGame()
+    private IEnumerator ResetGameBoard()
     {
         yield return new WaitForSeconds(1f);
         _resetFailScreenflag = true;

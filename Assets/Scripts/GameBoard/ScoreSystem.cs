@@ -8,9 +8,10 @@ using UnityEngine;
 
 public class ScoreSystem
 {
-    private int _cardsMatchScore = 0;
-    private int _turnsScore = 0;
-    private int _cardComboScore = 0;
+    public int CardsMatchScore { private set; get; }
+    public int TurnsScore { private set; get; }
+    public int CardComboScore { private set; get; }
+
     private int _totalMatchScore = 0;
     private int _totalTurnsScore = 0;
     private int _totalCombo = 0;
@@ -27,11 +28,11 @@ public class ScoreSystem
     }
     public void ResetScoreForNewLevel()
     {
-        _cardsMatchScore = 0;
+        CardsMatchScore = 0;
         SetMatchScoreDashboard(0);
-        _turnsScore = 0;
+        TurnsScore = 0;
         SetTurnScoreDashboard(0);
-        _cardComboScore = 0;
+        CardComboScore = 0;
         SetComboScoreDashboard(0);
     }
 
@@ -55,28 +56,28 @@ public class ScoreSystem
     {
         _match = false;
         IncrementTurn();
-        _cardComboScore = 0;
-        SetComboScoreDashboard(_cardComboScore);
+        CardComboScore = 0;
+        SetComboScoreDashboard(CardComboScore);
     }
 
     private void IncrementCardsMatch()
     {
-        _cardsMatchScore++;
-        SetMatchScoreDashboard(_cardsMatchScore);
+        CardsMatchScore++;
+        SetMatchScoreDashboard(CardsMatchScore);
         SetCardsTotalMatchScore();
     }
 
     private void IncrementTurn()
     {
-        _turnsScore++;
-        SetTurnScoreDashboard(_turnsScore);
+        TurnsScore++;
+        SetTurnScoreDashboard(TurnsScore);
         SetCardsTotalTurnsScore();
     }
 
     private void CardsComboScore()
     {
-        _cardComboScore++;
-        SetComboScoreDashboard(_cardComboScore);
+        CardComboScore++;
+        SetComboScoreDashboard(CardComboScore);
         SetCardsTotalComboScore();
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 /// <Class-Purpose>  
 /// Class for managing state of cards on board as well as checking cards interation
@@ -31,12 +32,40 @@ public class GameBoard : MonoBehaviour
     private CardValicationstate _cardCheckState = CardValicationstate.FirstCardCheck;
     private int _currentLevel = default;
     private ScoreSystem _scoreSystem;
+    [SerializeField] private LevelSaveSystem _levelSaveSystem;
 
     private void Start()
     {
         _scoreSystem = new ScoreSystem();
+        _levelSaveSystem = new LevelSaveSystem();
         _currentLevel = GamePlayerPreferenceManager.GetGameLevel();
         SetCurrentLevelText(_currentLevel);
+    }
+
+
+    public void LoadLastSaveLevel(List<Sprite> faceCardSprites)
+    {
+        _levelSaveSystem.LoadPreviousSavedBoardData();
+
+        ScaleCardToFitContainer(faceCardSprites[0], (float)_levelSaveSystem.TotalCardsOnBoard / 4);
+
+        for (int i = 0; i < _levelSaveSystem.TotalCardsOnBoard; i++)
+        {
+            CreateCard(
+                    _levelSaveSystem.CardsOnBoard[i].CardID,
+                    faceCardSprites.Single(s => s.name == _levelSaveSystem.CardsOnBoard[i].CardFaceName),
+                    _levelSaveSystem.CardsOnBoard[i].CardActive
+                );
+        }
+
+        foreach (Transform card in _spawnCards)
+        {
+            card.SetParent(_boardWidgetHolder);
+            card.GetComponent<RectTransform>().localScale = Vector3.one;
+        }
+
+        StartCoroutine(StartGame());
+
     }
 
     /// <summary> 
@@ -102,6 +131,7 @@ public class GameBoard : MonoBehaviour
 
     public void ResetBoard(List<Sprite> selectedCardFace)
     {
+        _levelSaveSystem.ClearSaveData();
         ResetBoardElements();
         _scoreSystem.ResetScoreForNewLevel();
         Transform[] exixtingCards = _boardWidgetHolder.GetComponentsInChildren<Transform>();
@@ -124,18 +154,21 @@ public class GameBoard : MonoBehaviour
     private void ShuffleAndSetToBoard()
     {
         GameController.ShuffleCards(ref _spawnCards);
+
         foreach (Transform card in _spawnCards)
         {
             card.SetParent(_boardWidgetHolder);
             card.GetComponent<RectTransform>().localScale = Vector3.one;
         }
+
+        _levelSaveSystem.SaveCardToPlayerPrefAsJason(_spawnCards);
     }
 
-    private void CreateCard(int id, Sprite cardFront)
+    private void CreateCard(int id, Sprite cardFront, bool activeCard = true)
     {
         _tempCard = Instantiate(_cardPrefab.gameObject).transform;
         _tempCard.gameObject.SetActive(true);
-        _tempCard.GetComponent<Card>().Init(id, cardFront, ValidateCardCombination);
+        _tempCard.GetComponent<Card>().Init(id, cardFront, ValidateCardCombination, activeCard);
         _spawnCards.Add(_tempCard);
     }
 
@@ -155,18 +188,44 @@ public class GameBoard : MonoBehaviour
         card2.DeactivateCardAnimated();
         _spawnCards.Remove(card1.transform);
         _spawnCards.Remove(card2.transform);
+
+        _levelSaveSystem.UpdateCard
+            (
+                card1.GetFaceCardName(),
+                _scoreSystem.CardsMatchScore,
+                _scoreSystem.TurnsScore,
+                _scoreSystem.CardComboScore
+            );
+
         ValidateGameEnd();
     }
 
     private IEnumerator StartGame()
     {
         yield return new WaitForSeconds(StartGameAfterTimer);
+        List<Transform> RemovePlayedCards = new List<Transform>();
         foreach (Transform card in _spawnCards)
         {
-            card.GetComponent<Card>().ShowCardSide(Card.CardSides.Back);
+            if (card.GetComponent<Button>().interactable)
+            {
+                card.GetComponent<Card>().ShowCardSide(Card.CardSides.Back);
+            }
+            else
+            {
+                RemovePlayedCards.Add(card);
+            }
         }
 
+        RemoveMatchingCardsFromPreviousSavedGame(RemovePlayedCards);
         _timerSystem.StartGameTimer();
+    }
+
+    private void RemoveMatchingCardsFromPreviousSavedGame(List<Transform> RemovePlayedCards)
+    {
+        foreach (Transform card in RemovePlayedCards)
+        {
+            _spawnCards.Remove(card);
+        }
     }
 
     private void ValidateGameEnd()
@@ -176,6 +235,7 @@ public class GameBoard : MonoBehaviour
             GameController.LevelCompleteEventListner?.Invoke();
             _timerSystem.StopLevelTimer();
             SetLevelLabel();
+            _levelSaveSystem.ClearSaveData();
         }
     }
 
