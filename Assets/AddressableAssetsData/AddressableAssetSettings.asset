@@ -85,7 +85,8 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
-    - GameCard
+    - GameCard3x3
+    - GameCard5x6
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 603c57517e1b91648b7faa884a1533ef, type: 2}

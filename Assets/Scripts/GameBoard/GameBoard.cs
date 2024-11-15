@@ -32,7 +32,7 @@ public class GameBoard : MonoBehaviour
     private CardValicationstate _cardCheckState = CardValicationstate.FirstCardCheck;
     private int _currentLevel = default;
     private ScoreSystem _scoreSystem;
-    [SerializeField] private LevelSaveSystem _levelSaveSystem;
+    private LevelSaveSystem _levelSaveSystem;
 
     private void Start()
     {
@@ -46,6 +46,11 @@ public class GameBoard : MonoBehaviour
     public void LoadLastSaveLevel(List<Sprite> faceCardSprites)
     {
         _levelSaveSystem.LoadPreviousSavedBoardData();
+
+        _scoreSystem.SetLastLevelSavedScores(
+            _levelSaveSystem.MatchedCount,
+            _levelSaveSystem.TurnsCount,
+            _levelSaveSystem.CardsComboCount);
 
         ScaleCardToFitContainer(faceCardSprites[0], (float)_levelSaveSystem.TotalCardsOnBoard / 4);
 
@@ -183,7 +188,7 @@ public class GameBoard : MonoBehaviour
 
     private IEnumerator DeactivateMatchingCards(Card card1, Card card2)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         card1.DeactivateCardAnimated();
         card2.DeactivateCardAnimated();
         _spawnCards.Remove(card1.transform);
@@ -247,7 +252,7 @@ public class GameBoard : MonoBehaviour
     }
 
     /// <summary> 
-    //scalling cards according to containor widget
+    //scalling cards according to containor widget or Screen Size
     /// </summary> 
     private void ScaleCardToFitContainer(Sprite referenceCardSize, float gridSize)
     {

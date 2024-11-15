@@ -19,6 +19,7 @@ public class Card : MonoBehaviour
     private Action<Card> _callbackSelectedCardToGameBoard;
     private float _cardRotationVelocity;
     private bool flipAnimFlag = true;
+    private float rotateCardOverTime = 0.1f;
 
     /// <summary>
     /// Initializes the card with the given ID and face sprite, and sets up the button click listener.
@@ -81,7 +82,7 @@ public class Card : MonoBehaviour
     public void ResetCard()
     {
         ShowCardSide(CardSides.Back);
-        _cardInteractionBtn.interactable = true;
+        StartCoroutine(ButtonInteractionToggle(true, rotateCardOverTime * 5f));
     }
 
     public void ResetCard(int cardId, Sprite cardFace)
@@ -165,7 +166,7 @@ public class Card : MonoBehaviour
     {
         while (true)
         {
-            float angle = Mathf.SmoothDampAngle(obj.eulerAngles.y, targetAngle, ref _cardRotationVelocity, 0.1f);
+            float angle = Mathf.SmoothDampAngle(obj.eulerAngles.y, targetAngle, ref _cardRotationVelocity, rotateCardOverTime);
             obj.rotation = Quaternion.Euler(0, angle, 0);
 
             if (Mathf.Abs(obj.eulerAngles.y - targetAngle) <= threshold)
@@ -191,5 +192,11 @@ public class Card : MonoBehaviour
         objectToScale.localScale = toScale; // Ensure it reaches the exact final scale
         objectToScale.gameObject.SetActive(false); // Hide the object
         objectToScale.localScale = Vector3.one; // Reset scale if necessary
+    }
+
+    private IEnumerator ButtonInteractionToggle(bool interaction, float overtime = 0f)
+    {
+        yield return new WaitForSeconds(overtime);
+        _cardInteractionBtn.interactable = interaction;
     }
 }

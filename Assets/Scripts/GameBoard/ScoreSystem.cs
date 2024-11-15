@@ -36,6 +36,12 @@ public class ScoreSystem
         SetComboScoreDashboard(0);
     }
 
+    public void SetLastLevelSavedScores(int matchScore,int turnScore, int comboScore)
+    {
+        CardsMatchScore = matchScore;
+        TurnsScore = turnScore;
+        CardComboScore = comboScore;
+    }
 
     public void CardsMatched_Score()
     {
